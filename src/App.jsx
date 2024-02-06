@@ -5,10 +5,30 @@ import toast, { Toaster } from "react-hot-toast";
 import Form from "./components/Form";
 import { createToken } from "./utils/createToken";
 import { resetToken } from "./utils/resetToken";
+import { dateDifferenceInHours } from "./utils/dateDifferenceInHours";
+import Container from "./components/Container";
 
 function App() {
   const [API_KEY] = useState(window.localStorage.getItem("api_key"));
+  const [isActive, setIsActive] = useState(false);
+  const [apiKeySession, setApiKeySession] = useState(
+    window.localStorage.getItem("session_api_key")
+  );
   const [categories, setCategories] = useState();
+
+  console.log(dateDifferenceInHours(new Date()));
+
+  if (!apiKeySession) {
+    window.localStorage.setItem("session_api_key", new Date());
+  }
+
+  if (
+    dateDifferenceInHours(
+      new Date(window.localStorage.getItem("session_api_key"))
+    ) >= 6
+  ) {
+    resetToken();
+  }
 
   useEffect(() => {
     axios
@@ -18,6 +38,7 @@ function App() {
         setCategories(res.data.trivia_categories);
         setSelectedCategory(res.data.trivia_categories[0].name);
         setSelectedCategoryId(res.data.trivia_categories[0].id);
+        setApiKeySession(new Date());
       })
       .catch((err) => {
         toast.error(err);
@@ -29,6 +50,8 @@ function App() {
   const [selectedCategoryId, setSelectedCategoryId] = useState();
   const [selectedDifficulty, setSelectedDifficulty] = useState("easy");
 
+  const [data, setData] = useState(null);
+
   if (!API_KEY) {
     createToken();
   }
@@ -36,36 +59,41 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    console.log(
-      `https://opentdb.com/api.php?amount=${numberOfQuestions}&category=${selectedCategoryId}&difficulty=${selectedDifficulty}&token=${API_KEY}`
-    );
-
     axios
       .get(
         `https://opentdb.com/api.php?amount=${numberOfQuestions}&category=${selectedCategoryId}&difficulty=${selectedDifficulty}&token=${API_KEY}`
       )
       .then((res) => {
-        console.log(res);
+        setData(res.data.results);
+        console.log(res.data.results);
       })
       .catch((err) => {
         toast.error(err);
       });
+
+    setIsActive(true);
   };
 
   return (
     <>
-      <div>
-        <Form
-          categories={categories}
-          numberOfQuestions={numberOfQuestions}
-          setNumberOfQuestions={setNumberOfQuestions}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
-          selectedDifficulty={selectedDifficulty}
-          setSelectedDifficulty={setSelectedDifficulty}
-          handleSubmit={handleSubmit}
-          setSelectedCategoryId={setSelectedCategoryId}
-        />
+      <div className="app">
+        <Container>
+          {!isActive && (
+            <Form
+              categories={categories}
+              numberOfQuestions={numberOfQuestions}
+              setNumberOfQuestions={setNumberOfQuestions}
+              selectedCategory={selectedCategory}
+              setSelectedCategory={setSelectedCategory}
+              selectedDifficulty={selectedDifficulty}
+              setSelectedDifficulty={setSelectedDifficulty}
+              handleSubmit={handleSubmit}
+              setSelectedCategoryId={setSelectedCategoryId}
+            />
+          )}
+
+          {isActive && data && <h1>{data[0].question}</h1>}
+        </Container>
       </div>
       <Toaster />
     </>
