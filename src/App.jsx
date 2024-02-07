@@ -7,6 +7,7 @@ import { createToken } from "./utils/createToken";
 import { resetToken } from "./utils/resetToken";
 import { dateDifferenceInHours } from "./utils/dateDifferenceInHours";
 import Container from "./components/Container";
+import List from "./components/List";
 
 function App() {
   const [API_KEY] = useState(window.localStorage.getItem("api_key"));
@@ -30,6 +31,7 @@ function App() {
   }
 
   useEffect(() => {
+    window.localStorage.setItem("userOptions", []);
     axios
       .get("https://opentdb.com/api_category.php")
       .then((res) => {
@@ -91,7 +93,7 @@ function App() {
             />
           )}
 
-          {isActive && data && <h1>{data[0].question}</h1>}
+          {isActive && data && <List data={data} />}
         </Container>
       </div>
       <Toaster />
