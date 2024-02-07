@@ -16,8 +16,6 @@ function App() {
   );
   const [categories, setCategories] = useState();
 
-  console.log(dateDifferenceInHours(new Date()));
-
   if (!apiKeySession) {
     window.localStorage.setItem("session_api_key", new Date());
   }
@@ -28,6 +26,7 @@ function App() {
     ) >= 6
   ) {
     resetToken();
+    window.localStorage.setItem("session_api_key", new Date());
   }
 
   useEffect(() => {
