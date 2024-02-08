@@ -1,9 +1,12 @@
+import "../App.css";
 import toast from "react-hot-toast";
 import Item from "./Item";
+import { useState } from "react";
 
 const List = ({ data, setIsActive, isActive }) => {
+  const [correctAnswers, setCorrectAnswers] = useState(0);
+
   const handleSubmit = () => {
-    console.log(data);
     const localOptions = JSON.parse(window.localStorage.getItem("userOptions"));
 
     if (localOptions.length !== data.length) {
@@ -11,14 +14,44 @@ const List = ({ data, setIsActive, isActive }) => {
       return;
     }
 
+    for (const dataItem of data) {
+      for (const userOption of localOptions) {
+        if (
+          dataItem.question === userOption.question &&
+          dataItem.correct_answer === userOption.answer
+        ) {
+          setCorrectAnswers((prev) => prev + 1);
+        }
+      }
+    }
+
     setIsActive(false);
   };
 
   return (
-    <div>
-      <p>{data[0].category}</p>
-      <p>{data[0].difficulty}</p>
-      <ul>
+    <div className="list">
+      {!isActive && (
+        <>
+          <p className="list-paragraph">
+            Correct answers:{" "}
+            <b>
+              {correctAnswers}/{data.length}
+            </b>
+          </p>
+          <p className="list-paragraph">
+            Percentage of correct answers:{" "}
+            <b>{((correctAnswers / data.length) * 100).toFixed(2)}%</b>
+          </p>
+        </>
+      )}
+
+      <p className="list-paragraph">
+        Category: <b>{data[0].category}</b>
+      </p>
+      <p className="list-paragraph">
+        Level: <b>{data[0].difficulty}</b>
+      </p>
+      <ul className="list">
         {data &&
           data.map(
             ({
@@ -42,9 +75,11 @@ const List = ({ data, setIsActive, isActive }) => {
             )
           )}
       </ul>
-      <button onClick={handleSubmit} type="submit">
-        End Test
-      </button>
+      {isActive && (
+        <button className="button-end" onClick={handleSubmit} type="submit">
+          End Test
+        </button>
+      )}
     </div>
   );
 };

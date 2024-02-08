@@ -1,2 +1,4 @@
 @import url("./styles/Container.module.css");
 @import url("./styles/Form.module.css");
+@import url("./styles/List.module.css");
+@import url("./styles/Item.module.css");

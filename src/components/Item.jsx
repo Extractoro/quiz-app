@@ -1,10 +1,9 @@
+import "../App.css";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
 const Item = ({
-  category,
   correct_answer,
-  difficulty,
   incorrect_answers,
   question,
   type,
@@ -61,13 +60,13 @@ const Item = ({
   };
 
   return (
-    <li>
-      <h2>{question}</h2>
+    <li className="list-item">
+      <h2 className="item-title">{question}</h2>
 
-      <div className="">
+      <div className="item-answers">
         {type === "multiple"
           ? answersMultiple.map((answer, i) => (
-              <label key={answer}>
+              <label key={answer} className="item-label">
                 <input
                   disabled={!isActive}
                   type="checkbox"
@@ -89,10 +88,14 @@ const Item = ({
               </label>
             ))}
       </div>
-      {!isActive && <p>Correct answer: </p>}
+      {!isActive && (
+        <p className="item-correct">Correct answer: {correct_answer}</p>
+      )}
 
       {isActive && (
-        <button onClick={() => submitAnswer(question)}>Submit</button>
+        <button className="item-submit" onClick={() => submitAnswer(question)}>
+          Submit
+        </button>
       )}
     </li>
   );

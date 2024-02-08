@@ -1,0 +1,30 @@
+.list {
+  color: #4b4242;
+}
+
+.list-paragraph {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.list {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.button-end {
+  position: relative;
+  background-color: #352d2d;
+  outline: none;
+  color: #fff4f4;
+  padding: 8px 25px;
+  border: 1px solid #4b4242;
+  border-radius: 5px;
+  transition: all;
+  transition-duration: 300ms;
+}
+
+.button-end:hover {
+  top: 1px;
+  background-color: #625959;
+}
