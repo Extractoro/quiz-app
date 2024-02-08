@@ -46,10 +46,10 @@ const List = ({ data, setIsActive, isActive }) => {
       )}
 
       <p className="list-paragraph">
-        Category: <b>{data[0].category}</b>
+        Category: <b>{data && data[0].category}</b>
       </p>
       <p className="list-paragraph">
-        Level: <b>{data[0].difficulty}</b>
+        Level: <b>{data && data[0].difficulty}</b>
       </p>
       <ul className="list">
         {data &&
