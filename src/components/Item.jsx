@@ -8,9 +8,9 @@ const Item = ({
   incorrect_answers,
   question,
   type,
+  isActive,
 }) => {
   const [selected, setSelected] = useState(null);
-  // const [userOptions, setUserOptions] = useState([]);
   const answersMultiple = [...incorrect_answers, correct_answer].sort();
   const answersBoolean = ["false", "true"];
 
@@ -19,19 +19,8 @@ const Item = ({
   };
 
   const shouldUpdate = (answers) => {
-    for (const answer of answers) {
-      if (answer.question === question) {
-        const filtered = answers.filter(
-          (answer) => answer.question !== question
-        );
-
-        console.log(filtered);
-
-        window.localStorage.setItem("userOptions", JSON.stringify(filtered));
-      } else {
-        return;
-      }
-    }
+    const filtered = answers.filter((answer) => answer.question !== question);
+    window.localStorage.setItem("userOptions", JSON.stringify(filtered));
   };
 
   const submitAnswer = (question) => {
@@ -39,7 +28,8 @@ const Item = ({
       (answersMultiple[selected] || answersBoolean[selected] || "nothing") ===
       "nothing"
     ) {
-      toast.error();
+      toast.error("You must select one answer (your previous answer saved)");
+      return;
     }
 
     let answers = null;
@@ -66,12 +56,12 @@ const Item = ({
       opts.push(...obj);
       window.localStorage.setItem("userOptions", JSON.stringify(opts));
     }
+
+    toast.success("Your answers saved successfully!");
   };
 
   return (
     <li>
-      <p>{category}</p>
-      <p>{difficulty}</p>
       <h2>{question}</h2>
 
       <div className="">
@@ -79,6 +69,7 @@ const Item = ({
           ? answersMultiple.map((answer, i) => (
               <label key={answer}>
                 <input
+                  disabled={!isActive}
                   type="checkbox"
                   checked={i === selected}
                   onChange={() => onChange(i)}
@@ -89,6 +80,7 @@ const Item = ({
           : answersBoolean.map((answer, i) => (
               <label key={answer}>
                 <input
+                  disabled={!isActive}
                   type="checkbox"
                   checked={i === selected}
                   onChange={() => onChange(i)}
@@ -97,8 +89,11 @@ const Item = ({
               </label>
             ))}
       </div>
+      {!isActive && <p>Correct answer: </p>}
 
-      <button onClick={() => submitAnswer(question)}>Submit</button>
+      {isActive && (
+        <button onClick={() => submitAnswer(question)}>Submit</button>
+      )}
     </li>
   );
 };

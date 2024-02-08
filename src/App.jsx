@@ -35,7 +35,6 @@ function App() {
     axios
       .get("https://opentdb.com/api_category.php")
       .then((res) => {
-        console.log(res);
         setCategories(res.data.trivia_categories);
         setSelectedCategory(res.data.trivia_categories[0].name);
         setSelectedCategoryId(res.data.trivia_categories[0].id);
@@ -66,13 +65,13 @@ function App() {
       )
       .then((res) => {
         setData(res.data.results);
-        console.log(res.data.results);
       })
       .catch((err) => {
         toast.error(err);
       });
 
     setIsActive(true);
+    window.localStorage.setItem("userOptions", []);
   };
 
   return (
@@ -93,7 +92,9 @@ function App() {
             />
           )}
 
-          {isActive && data && <List data={data} />}
+          {data && (
+            <List data={data} isActive={isActive} setIsActive={setIsActive} />
+          )}
         </Container>
       </div>
       <Toaster />
